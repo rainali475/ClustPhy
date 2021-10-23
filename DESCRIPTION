@@ -1,0 +1,17 @@
+Package: ClustPhy
+Type: Package
+Title: Phylogenetic Trees Clustering
+Version: 0.1.0
+Author: Yuzi Li
+Maintainer: Yuzi Li <rainarainarain@hotmail.com>
+Description: ClustPhy provides a number of options for clustering phylogenetic 
+    trees (including k-means, expectation maximization, and hierarchical 
+    clustering), to compare clusterings (variation of information, gap 
+    statistics), and visualize the clusters. This simplifies the workflow of 
+    finding the optimal clusters for a phylogenetic tree and provides an easier 
+    means to visualize results.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.2
+Roxygen: list(markdown = TRUE)
