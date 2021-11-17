@@ -197,6 +197,7 @@ of different k values for either EM or PAM clustering:
  [8,] 8.290863 9.425372 1.1345085 0.02755661
  [9,] 8.179419 9.409750 1.2303315 0.02800119
 [10,] 8.136667 9.394100 1.2574333 0.02723069
+> set.seed(NULL)
 ```
 
 These gap statistics can be plotted by __*plotGapStat*__:
@@ -207,3 +208,17 @@ plotGapStat(gapStat)
 
 <div style="text-align:center"><img src="PAM_gapstats.png" width="750"/>
 <div style="text-align:left">
+
+## Package References
+
+[Li, Y. (2021) ClustPhy: A Phylogenetic Tree Clustering Package. Unpublished.](https://github.com/rainali475/ClustPhy)
+
+<br>
+
+## Other References
+
+R Core Team (2020). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. https://www.R-project.org/
+
+Kaufman, L., &amp; Rousseeuw, P. J. (2005). Finding groups in data: An introduction to cluster analysis. Wiley.
+
+Legendre17. (1960, August 1). Finding the coordinates of points from distance matrix. Mathematics Stack Exchange. Retrieved November 17, 2021, from https://math.stackexchange.com/questions/156161/finding-the-coordinates-of-points-from-distance-matrix. 
