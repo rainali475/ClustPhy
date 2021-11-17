@@ -32,8 +32,8 @@ Under construction
 ## Overview
 
 ``` r
-ls("package:TestingPackage")
-data(package = "TestingPackage")
+ls("package:ClustPhy")
+data(package = "ClustPhy")
 ```
 
 There are 6 functions available in this package. There are 2 clustering
