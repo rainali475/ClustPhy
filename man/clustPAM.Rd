@@ -48,8 +48,11 @@ given the number of clusters, file directory for a phylogenetic tree or a
 newick tree character string.
 }
 \examples{
+# Make 6 clusters from a newick tree using PAM
+pam <- clustPAM(6, text = NwkTree2)
 
 }
 \references{
-
+Kaufman, L., & Rousseeuw, P. J. (2005). Finding groups in data:
+An introduction to cluster analysis. Wiley.
 }

@@ -31,8 +31,20 @@
 #'     clusters.
 #'
 #' @examples
+#' # Example 1
+#' # Make 6 clusters from a newick tree using PAM
+#' pam <- clustPAM(6, text = NwkTree2)
+#' # Plot the pam clusters
+#' plotClustersTree(pam$phyloTree,
+#'                  pam$clustering,
+#'                  show.centers = pam$medoids,
+#'                  center.symbol = pam$medoids)
 #'
-#' @references
+#' # Example 2
+#' # Make 6 clusters from a newick tree using EM
+#' em <- clustEM(6, text = NwkTree2)
+#' # Plot the em clusters
+#' plotClustersTree(em$phyloTree, em$clustering)
 #'
 #' @export
 #' @import ape
@@ -172,7 +184,7 @@ plotClustersTree <- function(tree,
 #'
 #' @return Returns a biplot of different clusters with different colors and
 #'     an S3 object of class treeDimred with the coordinate matrix and PCA results.
-#' \itemize {
+#' \itemize{
 #'     \item coordM - The coordinate matrix representation of tree leaves in
 #'     n-dimensional space.
 #'     \item PCA - A list of 5 elements containing results from principle
@@ -180,8 +192,11 @@ plotClustersTree <- function(tree,
 #' }
 #'
 #' @examples
-#'
-#' @references
+#' pam <- clustPAM(6, text = NwkTree2)
+#' dimRedInfoPAM <- plotClusters2D(pam$phyloTree,
+#'                                 pam$clustering,
+#'                                 show.centers = pam$medoids,
+#'                                 center.symbol = pam$medoids)
 #'
 #' @export
 #' @import ape

@@ -39,8 +39,10 @@ A function that compares a set of clustering schemes by PAM or EM and
 computes the gap statistics from a given range of k.
 }
 \examples{
-
-}
-\references{
+pam <- clustPAM(6, text = NwkTree2)
+set.seed(5)
+gapStat <- compareGap(distM = pam$distM, k.max = 10, method = "PAM")
+gapStat$Tab
+set.seed(NULL)
 
 }

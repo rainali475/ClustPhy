@@ -37,8 +37,11 @@ newick tree character string, and an optional set of labeled leaves for
 semi-supervised clustering.
 }
 \examples{
+# Make 6 clusters from a newick tree using EM
+em <- clustEM(6, text = NwkTree2)
 
 }
 \references{
-
+Kaufman, L., & Rousseeuw, P. J. (2005). Finding groups in data:
+An introduction to cluster analysis. Wiley.
 }

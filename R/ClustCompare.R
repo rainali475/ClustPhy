@@ -26,8 +26,11 @@
 #' @return An S3 object of "clusGap" with gap statistics.
 #'
 #' @examples
-#'
-#' @references
+#' pam <- clustPAM(6, text = NwkTree2)
+#' set.seed(5)
+#' gapStat <- compareGap(distM = pam$distM, k.max = 10, method = "PAM")
+#' gapStat$Tab
+#' set.seed(NULL)
 #'
 #' @export
 #' @import cluster

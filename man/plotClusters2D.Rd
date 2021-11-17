@@ -52,7 +52,14 @@ set smaller to decrease runtime of PCA at the cost of discarding the
 least significant dimensions beyond maxDim.}
 }
 \value{
-Returns a biplot of different clusters with different colors.
+Returns a biplot of different clusters with different colors and
+an S3 object of class treeDimred with the coordinate matrix and PCA results.
+\itemize{
+\item coordM - The coordinate matrix representation of tree leaves in
+n-dimensional space.
+\item PCA - A list of 5 elements containing results from principle
+component analysis.
+}
 }
 \description{
 A function that plots clusters on a 2D graph using dimensionality reduction
@@ -60,8 +67,10 @@ by PCA, with a given clustering and options of coloring scheme and whether
 to show the leaf names.
 }
 \examples{
-
-}
-\references{
+pam <- clustPAM(6, text = NwkTree2)
+dimRedInfoPAM <- plotClusters2D(pam$phyloTree,
+                                pam$clustering,
+                                show.centers = pam$medoids,
+                                center.symbol = pam$medoids)
 
 }

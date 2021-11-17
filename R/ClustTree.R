@@ -37,8 +37,12 @@
 #' }
 #'
 #' @examples
+#' # Make 6 clusters from a newick tree using PAM
+#' pam <- clustPAM(6, text = NwkTree2)
 #'
 #' @references
+#' Kaufman, L., &amp; Rousseeuw, P. J. (2005). Finding groups in data:
+#' An introduction to cluster analysis. Wiley.
 #'
 #' @export
 #' @import cluster
@@ -103,8 +107,12 @@ clustPAM <- function(k, file = "", text = NULL){
 #' }
 #'
 #' @examples
+#' # Make 6 clusters from a newick tree using EM
+#' em <- clustEM(6, text = NwkTree2)
 #'
 #' @references
+#' Kaufman, L., &amp; Rousseeuw, P. J. (2005). Finding groups in data:
+#' An introduction to cluster analysis. Wiley.
 #'
 #' @export
 #' @import ape

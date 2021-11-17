@@ -52,8 +52,19 @@ A function that plots a phylogenetic tree with a given clustering scheme and
 given options of coloring scheme and whether to show the leaf names.
 }
 \examples{
+# Example 1
+# Make 6 clusters from a newick tree using PAM
+pam <- clustPAM(6, text = NwkTree2)
+# Plot the pam clusters
+plotClustersTree(pam$phyloTree,
+                 pam$clustering,
+                 show.centers = pam$medoids,
+                 center.symbol = pam$medoids)
 
-}
-\references{
+# Example 2
+# Make 6 clusters from a newick tree using EM
+em <- clustEM(6, text = NwkTree2)
+# Plot the em clusters
+plotClustersTree(em$phyloTree, em$clustering)
 
 }

@@ -14,11 +14,16 @@
 #' @param color A character string indicating the color of line graph. Default
 #'     value is "steelblue".
 #'
-#' @return
+#' @return A plot of the gap statistics, with a vertical dashed line indicating
+#'     the best k value.
 #'
 #' @examples
-#'
-#' @references
+#' pam <- clustPAM(6, text = NwkTree2)
+#' set.seed(5)
+#' gapStat <- compareGap(distM = pam$distM, k.max = 10, method = "PAM")
+#' gapStat$Tab
+#' set.seed(NULL)
+#' plotGapStat(gapStat)
 #'
 #' @export
 #' @import factoextra
