@@ -42,5 +42,7 @@ plotGapStat <- function(gapStat, method = "Tibs2001SEmax", color = "steelblue") 
   }
 
   # Generate gap statistics pot using factoextra::fviz_gap_stat
-  return(factoextra::fviz_gap_stat(gapStat, maxSE = list(method = method, SE.factor = 1)))
+  return(factoextra::fviz_gap_stat(gapStat,
+                                   maxSE = list(method = method, SE.factor = 1),
+                                   linecolor = color))
 }

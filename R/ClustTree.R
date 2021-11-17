@@ -50,7 +50,7 @@ clustPAM <- function(k, file = "", text = NULL){
     stop("k must be a positive integer greater than 1.")
   }
 
-  ClustPhy::phyloTree <- getPhyloTree(file, text)
+  phyloTree <- getPhyloTree(file, text)
 
   # Check if there is more clusters required than the number of leaves in the
   # tree.
@@ -116,7 +116,7 @@ clustEM <- function(k, file = "", text = NULL) {
     stop("k must be a positive integer greater than 1.")
   }
 
-  phyloTree <- ClustPhy::getPhyloTree(file, text)
+  phyloTree <- getPhyloTree(file, text)
 
   # Check if there is more clusters required than the number of leaves in the
   # tree.
@@ -156,20 +156,6 @@ clustEM <- function(k, file = "", text = NULL) {
   return(EMresults)
 }
 
-#' Gets a phylo tree object from a tree string or file.
-#'
-#' A function that checks the input string or file and returns a phylo tree
-#' object. This is a helper function and is not exported.
-#'
-#' @param file A character string indicating the path to the newick tree.
-#'     Default value is "".
-#' @param text A character string of the tree in newick format. Default value
-#'     is NULL. By default, this is ignored. When this argument is assigned a
-#'     value, the argument file is ignored.
-#'
-#' @return Returns an S3 object of class phylo.
-#'
-#' @import ape
 getPhyloTree <- function(file = "", text = NULL) {
 
   # Check user inputs
@@ -183,11 +169,6 @@ getPhyloTree <- function(file = "", text = NULL) {
 
   # Read the tree to an S3 object of class "phylo"
   phyloTree <- ape::read.tree(file = file, text = text)
-  if (class(phyloTree) == "multiPhylo") {
-    warning("Multiple trees detected in input. Only the first tree will be
-            used.", call. = FALSE)
-    phyloTree <- phyloTree[[1]]
-  }
 
   # Check if the tree contains branch lengths
   if (! "edge.length" %in% names(phyloTree)) {

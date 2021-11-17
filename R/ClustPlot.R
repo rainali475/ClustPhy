@@ -44,12 +44,27 @@ plotClustersTree <- function(tree,
                          symbol.cex = 1) {
 
   # Check user inputs
-  col.palette <- ClustPhy::getColPalette(tree,
-                                         clustering,
-                                         col.palette,
-                                         show.centers,
-                                         center.symbol,
-                                         symbol.cex)
+  col.palette <- getColPalette(tree,
+                               clustering,
+                               col.palette,
+                               show.centers,
+                               center.symbol,
+                               symbol.cex)
+
+  # Check if the tree contains branch lengths
+  if (! "edge.length" %in% names(tree)) {
+    stop("The input tree must contain branch lengths.")
+  }
+
+  if (any(is.na(tree$edge.length))) {
+    stop("There must be a valid branch length for every edge in the tree.
+         Also check tree format: brackets cannot be included in node names.")
+  }
+
+  # Check if the tree contains duplicate leaf names
+  if (any(table(tree$tip.label) > 1)) {
+    stop("The input tree must not contain duplicate leaf names.")
+  }
 
   # Plot tree
   ape::plot.phylo(tree, type = "fan", show.tip.label = FALSE)
@@ -148,14 +163,21 @@ plotClustersTree <- function(tree,
 #'     each symbol. If the vector is shorter than the number of cluster centers,
 #'     the numbers will be recycled. This argument is ignored if show.centers is
 #'     NULL.
-#' @param maxDim A positive integer that is at least 1, indicating the max
+#' @param maxDim A positive integer that is at least 2, indicating the max
 #'     dimension of the coordinates that represent tree leaves. The dimensions
 #'     will be less than or equal to the number of leaves. The default value of
 #'     maxDim is NULL, for which the full dimension will be used. maxDim can be
 #'     set smaller to decrease runtime of PCA at the cost of discarding the
 #'     least significant dimensions beyond maxDim.
 #'
-#' @return Returns a biplot of different clusters with different colors.
+#' @return Returns a biplot of different clusters with different colors and
+#'     an S3 object of class treeDimred with the coordinate matrix and PCA results.
+#' \itemize {
+#'     \item coordM - The coordinate matrix representation of tree leaves in
+#'     n-dimensional space.
+#'     \item PCA - A list of 5 elements containing results from principle
+#'     component analysis.
+#' }
 #'
 #' @examples
 #'
@@ -163,6 +185,8 @@ plotClustersTree <- function(tree,
 #'
 #' @export
 #' @import ape
+#' @importFrom graphics points text
+#' @importFrom stats prcomp
 plotClusters2D <- function(tree,
                            clustering,
                            col.palette = NULL,
@@ -171,18 +195,41 @@ plotClusters2D <- function(tree,
                            symbol.cex = 1,
                            maxDim = NULL) {
   # Check user inputs
-  col.palette <- ClustPhy::getColPalette(tree,
-                                         clustering,
-                                         col.palette,
-                                         show.centers,
-                                         center.symbol,
-                                         symbol.cex)
+  col.palette <- getColPalette(tree,
+                               clustering,
+                               col.palette,
+                               show.centers,
+                               center.symbol,
+                               symbol.cex)
 
   if (! is.null(maxDim)) {
-    if (! is.numeric(maxDim) | maxDim < 1 | as.integer(maxDim) != maxDim) {
+    if (! is.numeric(maxDim)) {
+      stop("maxDim must be a positive integer indicating the maximum
+         dimension of the coordinates representation of tree leaves.")
+    } else if (maxDim < 2 | as.integer(maxDim) != maxDim) {
       stop("maxDim must be a positive integer indicating the maximum
          dimension of the coordinates representation of tree leaves.")
     }
+  }
+
+  # Check if the tree contains branch lengths
+  if (! "edge.length" %in% names(tree)) {
+    stop("The input tree must contain branch lengths.")
+  }
+
+  if (any(is.na(tree$edge.length))) {
+    stop("There must be a valid branch length for every edge in the tree.
+         Also check tree format: brackets cannot be included in node names.")
+  }
+
+  # Check if the tree contains duplicate leaf names
+  if (any(table(tree$tip.label) > 1)) {
+    stop("The input tree must not contain duplicate leaf names.")
+  }
+
+  # Check if the tree contains less than 2 leaves
+  if (length(tree$tip.label) < 2) {
+    stop("There must be at least 2 leaves in the input tree.")
   }
 
   # Get distance matrix from distances between tree leaves
@@ -210,11 +257,18 @@ plotClusters2D <- function(tree,
   for (i in valid.dims) {
     coordMatrix <- cbind(coordMatrix, eigen.M$vectors[, i] * sqrt.eigenvals[i])
   }
-  # Remove the columns that contain only 0s
+  # Remove the columns that contain only 0s. But make sure the matrix has at
+  # least 2 columns
   keep.cols <- ! logical(ncol(coordMatrix))
   for (i in 1:ncol(coordMatrix)) {
     if (all(coordMatrix[, i] == 0)) {
       keep.cols[i] <- FALSE
+    }
+  }
+  if (length(which(keep.cols)) < 2) {
+    # keep some columns that contain only 0s so that there is at least 2 columns
+    for (i in 1:(2 - length(which(keep.cols)))) {
+      keep.cols[which(! keep.cols)[i]] <- TRUE
     }
   }
   coordMatrix <- coordMatrix[, keep.cols]
@@ -300,36 +354,6 @@ plotClusters2D <- function(tree,
   return(dimredResult)
 }
 
-#' Check inputs and prepare color palette
-#'
-#' A function that checks the inputs to functions in ClustPlot.R, and returns
-#' a generated color palette.
-#'
-#' @param tree A phylo tree object.
-#' @param clustering An positive integer vector, usually the from the output of
-#'     clustPAM, indicating index of specific colors from the palette. The
-#'     integers in this vector must be at most the length of palette. Values of
-#'     0 indicate that the node is not assigned a cluster and therefore will not
-#'     be labeled. If show.centers is not NULL, then all cluster centers
-#'     indicated in the show.centers must not have a clustering value of 0.
-#'     clustering should be the same length as the number of leaves in the tree.
-#' @param col.palette A character vector indicating the colors used for different
-#'     clusters. If no value is given, the palette will be generated from
-#'     rainbow.
-#' @param show.centers A character vector indicating leaf names of the cluster
-#'     centers. Default value is NULL.
-#' @param center.symbol A character vector indicating the symbol or text
-#'     representative of the cluster centers. Default value is " * ". If the length
-#'     of center.symbol is less than the number of cluster centers specified in
-#'     show.centers, then the symbols are recycled. This argument is ignored
-#'     when show.centers is NULL.
-#' @param symbol.cex A numeric indicating factor scaling of center symbols.
-#'     Default value is 1. This can be a numeric vector indicating scaling of
-#'     each symbol. If the vector is shorter than the number of cluster centers,
-#'     the numbers will be recycled. This argument is ignored if show.centers is
-#'     NULL.
-#'
-#' @return Returns a character vector indicating a color palette.
 getColPalette <- function(tree,
                           clustering,
                           col.palette = NULL,
@@ -356,11 +380,15 @@ getColPalette <- function(tree,
     stop("col.palette should be a character vector indicating colors for each
          cluster.")
   } else if (is.null(col.palette)) {
-    col.palette <- rainbow(max(clustering))
+    col.palette <- grDevices::rainbow(max(clustering))
   }
 
   if (max(clustering) > length(col.palette) | min(clustering) < 0) {
-    stop("clustering contains invalid index for color in col.palette. ")
+    stop("clustering contains invalid index for color in col.palette.")
+  }
+
+  if (all(clustering == 0)) {
+    stop("clustering cannot be all 0s.")
   }
 
   if (! is.null(show.centers) & ! is.character(show.centers)) {
