@@ -17,10 +17,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(ClustPhy)
-```
-
 ## Introduction
 
 `ClustPhy` is an R package for clustering phylogenetic trees (using PAM or EM 
@@ -73,6 +69,7 @@ Here is an example that shows how to use ClustPhy to cluster a tree via EM and P
 
 ```r
 > pam <- clustPAM(6, text = NwkTree2)
+> em <- clustEM(6, text = NwkTree2)
 > str(pam)
 List of 5
  $ distM     : num [1:72, 1:72] 0 138 169 164 208 195 173 195 190 196 ...
@@ -222,3 +219,10 @@ R Core Team (2020). R: A language and environment for statistical computing. R F
 Kaufman, L., &amp; Rousseeuw, P. J. (2005). Finding groups in data: An introduction to cluster analysis. Wiley.
 
 Legendre17. (1960, August 1). Finding the coordinates of points from distance matrix. Mathematics Stack Exchange. Retrieved November 17, 2021, from https://math.stackexchange.com/questions/156161/finding-the-coordinates-of-points-from-distance-matrix. 
+
+
+----
+
+```{r}
+sessionInfo()
+```

@@ -36,8 +36,28 @@ ls("package:TestingPackage")
 data(package = "TestingPackage")
 ```
 
-`ClustPhy` contains 7 functions… Refer to package vignettes for more
-details.
+There are 6 functions available in this package. There are 2 clustering
+functions: ***clustPAM*** and ***clustEM***. They allow users to input
+phylogenetic trees in newick format either as a character string or a
+file path and performs clustering via either PAM (k-medoids) or EM
+(expectation maximization) algorithms. Users can specify the number of
+clusters they want. The functions ***plotClustersTree*** and
+***plotClusters2D*** can be used to visualize tree clusters on a
+phylogram or a 2D biplot, respectively. Users can specify whether or not
+to show a number of designated cluster centers, the symbols used to
+represent these centers, and the text size for these symbols.
+***plotClusters2D*** first converts the distance matrix of the tree to a
+coordinate matrix, then uses principle component analysis to reduce
+dimensionality of the matrix to plot data points on a 2-dimensional
+plot. The ***compareGap*** function takes as input a distance matrix
+representation of phylogenetic tree and outputs a set of gap statistics
+for a range from 1 cluster to k.max clusters. This can be used to select
+the best clustering scheme for the target tree. The ***plotGapStat***
+function takes the gap statistics output from ***compareGap*** and
+produces a plot of the gap statistics with a vertical dashed line
+representing the best number of clusters.
+
+Refer to package vignettes for more details.
 
 ``` r
 browseVignettes("ClustPhy")
@@ -45,51 +65,37 @@ browseVignettes("ClustPhy")
 
 An overview of the package is illustrated below.
 
+![](./inst/extdata/clustphy_overview.jpg)
+
 ## Contributions
 
-The author of this package is Yuzi (Raina) Li. …
+The author of this package is Yuzi (Raina) Li. The ***clustPAM***
+function makes use of the PAM clustering function in `cluster` to find
+clusterings and clusteri statistics. The ***clustEM*** function makes
+use of the `mclust` package for EM clustering algorithms. The
+***plotClustersTree*** uses plot.phylo function from `ape`.
+***plotClusters2D*** uses the algorithm described in
+<https://math.stackexchange.com/questions/156161/finding-the-coordinates-of-points-from-distance-matrix>.
+to convert the distance matrix to coordinate matrix. ***compareGap***
+uses the clusGap function available in `cluster` package to calculate
+gap statistics. ***plotGapStat*** uses `factoextra` package to plot the
+gap statistics and find the best k value.
 
 ## References
 
-…
+R Core Team (2020). R: A language and environment for statistical
+computing. R Foundation for Statistical Computing, Vienna, Austria.
+<https://www.R-project.org/>
+
+Kaufman, L., & Rousseeuw, P. J. (2005). Finding groups in data: An
+introduction to cluster analysis. Wiley.
+
+Legendre17. (1960, August 1). Finding the coordinates of points from
+distance matrix. Mathematics Stack Exchange. Retrieved November 17,
+2021, from
+<https://math.stackexchange.com/questions/156161/finding-the-coordinates-of-points-from-distance-matrix>.
 
 ## Acknowledgement
 
 This package was developed as part of an assessment for 2021 BCB410H:
 Applied Bioinformatics, University of Toronto, Toronto, CANADA.
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(ClustPhy)
-## basic example code
-```
-
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
-
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/v1/examples>.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
