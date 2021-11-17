@@ -1,0 +1,12 @@
+citHeader("To cite ClustPhy in publications use:")
+
+citEntry(
+  entry    = "Unpublished",
+  title    = "ClustPhy: A Phylogenetic Tree Clustering Package",
+  author   = "Yuzi Li",
+  note     = "Unpublished",
+  year     = "2021",
+  textVersion = paste(
+"Li, Y. (2021) ClustPhy: A Phylogenetic Tree Clustering Package. Unpublished. URL https://github.com/rainali475/ClustPhy"
+  )
+)

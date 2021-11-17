@@ -6,15 +6,57 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of ClustPhy is to …
+## Description
+
+`ClustPhy` is an R package for clustering phylogenetic trees (using PAM
+or EM clustering), comparing different clusterings (using gap
+statistics), and visualizing the clusters (in a phylogenetic tree or in
+a 2D biplot).
 
 ## Installation
 
-You can install the development version of ClustPhy like so:
+To install the latest version of the package:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+require("devtools")
+devtools::install_github("rainali475/ClustPhy", build_vignettes = TRUE)
+library("TestingPackage")
 ```
+
+To run the Shiny app:
+
+``` r
+Under construction
+```
+
+## Overview
+
+``` r
+ls("package:TestingPackage")
+data(package = "TestingPackage")
+```
+
+`ClustPhy` contains 7 functions… Refer to package vignettes for more
+details.
+
+``` r
+browseVignettes("ClustPhy")
+```
+
+An overview of the package is illustrated below.
+
+## Contributions
+
+The author of this package is Yuzi (Raina) Li. …
+
+## References
+
+…
+
+## Acknowledgement
+
+This package was developed as part of an assessment for 2021 BCB410H:
+Applied Bioinformatics, University of Toronto, Toronto, CANADA.
 
 ## Example
 

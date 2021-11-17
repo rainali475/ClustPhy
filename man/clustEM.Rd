@@ -4,7 +4,7 @@
 \alias{clustEM}
 \title{Cluster phylogenetic tree using EM}
 \usage{
-clustEM(k, file = "", text = NULL, label = NULL, maxDim = NULL)
+clustEM(k, file = "", text = NULL)
 }
 \arguments{
 \item{k}{A positive integer greater than 1 indicating the number of clusters.}
@@ -15,22 +15,20 @@ Default value is "".}
 \item{text}{A character string of the tree in newick format. Default value
 is NULL. By default, this is ignored. When this argument is assigned a
 value, the argument file is ignored.}
-
-\item{label}{An integer vector of length equal to the number of leaves.
-label should contain integers between 0 and k, with indices of 0s
-corresponding to indices of leaves that are to be assigned clusters.
-label indices of 1 to k correspond to indices of leaves with pre-labeled
-clusters. Default value is NULL, meaning no pre-labeled leaves.}
-
-\item{maxDim}{A positive integer that is at least 1, indicating the max
-dimension of the coordinates that represent tree leaves. The dimensions
-will be less than or equal to the number of leaves. The default value of
-maxDim is NULL, for which the full dimension will be used. maxDim can be
-set smaller to decrease runtime of EM at the cost of discarding the
-least significant dimensions beyond maxDim.}
 }
 \value{
-
+Returns an S3 object of class EMclusts with results.
+\itemize{
+\item distM - A distance matrix of tree leaves.
+\item phyloTree - An S3 object of class phylo, containing tree
+information.
+\item clustering - A positive integer vector indicating the clusters
+assigned to each leaf.
+\item mean - A numeric matrix with columns corresponding to mean
+coordinates of cluster centers.
+\item bic - A numeric indicating BIC value of the optimal model.
+\item model - A character string describing the optimal model used.
+}
 }
 \description{
 A function that calculates optimal tree clustering scheme using EM method
