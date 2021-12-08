@@ -106,17 +106,11 @@ compareGap <- function(distM,
         clustering <- cluster::pam(distM, i, cluster.only=TRUE, diss = TRUE)
         clusterings[[i - 1]] <- clustering
       }
-      # clusteringFunc <- function(x, k) {
-      #   return(list(cluster = cluster::pam(x, k, cluster.only=TRUE, diss = TRUE)))
-      # }
     } else { # method is EM
       for (i in 2:k.max) {
         clustering <- Mclust(distM, G = c(i), verbose = FALSE)$classification
         clusterings[[i - 1]] <- clustering
       }
-      # clusteringFunc <- function(x, k) {
-      #   return(list(cluster = Mclust(x, G = c(k), verbose = FALSE)$classification))
-      # }
     }
   }
   clusteringFunc <- function(x, k) {
@@ -126,5 +120,9 @@ compareGap <- function(distM,
     return(list(cluster = clusterings[[k - 1]]))
   }
 
-  return(cluster::clusGap(distM, FUN = clusteringFunc, K.max = k.max, B = B, verbose = FALSE))
+  return(cluster::clusGap(distM,
+                          FUN = clusteringFunc,
+                          K.max = k.max,
+                          B = B,
+                          verbose = FALSE))
 }
