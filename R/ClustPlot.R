@@ -30,6 +30,8 @@
 #'     value is 1. This can be a numeric vector indicating scaling of each
 #'     node (that is not a cluster center). If the vector is shorter than the
 #'     number of nodes, the numbers will be recycled.
+#' @param title A character string indicating the title of the plot. Default
+#'     value is "Tree Clusters".
 #'
 #' @return Returns a phylogram with different colors indicating different
 #'     clusters.
@@ -58,7 +60,8 @@ plotClustersTree <- function(tree,
                          show.centers = NULL,
                          center.symbol = " * ",
                          symbol.cex = 1,
-                         node.cex = 1) {
+                         node.cex = 1,
+                         title = "Tree Clusters") {
 
   # Check user inputs
   col.palette <- getColPalette(tree,
@@ -67,6 +70,11 @@ plotClustersTree <- function(tree,
                                show.centers,
                                center.symbol,
                                symbol.cex)
+
+  # Check title
+  if (! is.character(title)) {
+    stop("title must be a character string indicating the plot title.")
+  }
 
   # Check if the tree contains branch lengths
   if (! "edge.length" %in% names(tree)) {
@@ -84,7 +92,7 @@ plotClustersTree <- function(tree,
   }
 
   # Plot tree
-  ape::plot.phylo(tree, type = "fan", show.tip.label = FALSE)
+  ape::plot.phylo(tree, type = "fan", show.tip.label = FALSE, main = title)
 
   # Get indices of cluster centers
   centerIndices <- which(tree$tip.label %in% show.centers)
@@ -191,6 +199,8 @@ plotClustersTree <- function(tree,
 #'     maxDim is NULL, for which the full dimension will be used. maxDim can be
 #'     set smaller to decrease runtime of PCA at the cost of discarding the
 #'     least significant dimensions beyond maxDim.
+#' @param title A character string indicating the title of the plot. Default
+#'     value is "Tree Clusters Biplot".
 #'
 #' @return Returns a biplot of different clusters with different colors and
 #'     an S3 object of class treeDimred with the coordinate matrix and PCA results.
@@ -219,7 +229,8 @@ plotClusters2D <- function(tree,
                            center.symbol = " * ",
                            symbol.cex = 1,
                            node.cex = 1,
-                           maxDim = NULL) {
+                           maxDim = NULL,
+                           title = "Tree Clusters Biplot") {
   # Check user inputs
   col.palette <- getColPalette(tree,
                                clustering,
@@ -228,6 +239,11 @@ plotClusters2D <- function(tree,
                                center.symbol,
                                symbol.cex,
                                node.cex)
+
+  # Check title
+  if (! is.character(title)) {
+    stop("title must be a character string indicating the plot title.")
+  }
 
   if (! is.null(maxDim)) {
     if (! is.numeric(maxDim)) {
@@ -285,7 +301,8 @@ plotClusters2D <- function(tree,
                      "% explained var.)"),
        ylab = paste0("Dimension 2 (",
                      dim2.pvar,
-                     "% explained var.)"))
+                     "% explained var.)"),
+       main = title)
 
   # Add points from each cluster to the plot
   numNodes <- length(which(clustering != 0))
