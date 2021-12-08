@@ -52,6 +52,12 @@
 #' # Plot the em clusters
 #' plotClustersTree(em$phyloTree, em$clustering)
 #'
+#' @author {Yuzi Li, \email{rainal.li@mail.utoronto.ca}}
+#'
+#' @references
+#' Paradis E, Schliep K (2019). “ape 5.0: an environment for modern phylogenetics
+#' and evolutionary analyses in R.” Bioinformatics, 35, 526-528.
+#'
 #' @export
 #' @import ape
 plotClustersTree <- function(tree,
@@ -217,6 +223,12 @@ plotClustersTree <- function(tree,
 #'                                 pam$clustering,
 #'                                 show.centers = pam$medoids,
 #'                                 center.symbol = pam$medoids)
+#'
+#' @author {Yuzi Li, \email{rainal.li@mail.utoronto.ca}}
+#'
+#' @references
+#' Paradis E, Schliep K (2019). “ape 5.0: an environment for modern phylogenetics
+#' and evolutionary analyses in R.” Bioinformatics, 35, 526-528.
 #'
 #' @export
 #' @import ape
@@ -435,3 +447,5 @@ getColPalette <- function(tree,
 
   return(col.palette)
 }
+
+#[END]

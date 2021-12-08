@@ -25,8 +25,15 @@
 #' set.seed(NULL)
 #' plotGapStat(gapStat)
 #'
+#' @author {Yuzi Li, \email{rainal.li@mail.utoronto.ca}}
+#'
+#' @references
+#' Alboukadel Kassambara and Fabian Mundt (2020). factoextra: Extract and
+#' Visualize the Results of Multivariate Data Analyses. R package version 1.0.7.
+#' https://CRAN.R-project.org/package=factoextra
+#'
 #' @export
-#' @import factoextra
+#' @importFrom factoextra fviz_gap_stat
 plotGapStat <- function(gapStat, method = "Tibs2001SEmax", color = "steelblue") {
 
   # Check user input
@@ -47,7 +54,9 @@ plotGapStat <- function(gapStat, method = "Tibs2001SEmax", color = "steelblue") 
   }
 
   # Generate gap statistics pot using factoextra::fviz_gap_stat
-  return(factoextra::fviz_gap_stat(gapStat,
-                                   maxSE = list(method = method, SE.factor = 1),
-                                   linecolor = color))
+  return(fviz_gap_stat(gapStat,
+                       maxSE = list(method = method, SE.factor = 1),
+                       linecolor = color))
 }
+
+#[END]

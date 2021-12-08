@@ -32,6 +32,12 @@
 #' gapStat$Tab
 #' set.seed(NULL)
 #'
+#' @author {Yuzi Li, \email{rainal.li@mail.utoronto.ca}}
+#'
+#' @references
+#' Maechler M, Rousseeuw P, Struyf A, Hubert M, Hornik K (2021). cluster: Cluster
+#' Analysis Basics and Extensions. R package version 2.1.2
+#'
 #' @export
 #' @import cluster
 compareGap <- function(distM,
@@ -126,3 +132,5 @@ compareGap <- function(distM,
                           B = B,
                           verbose = FALSE))
 }
+
+#[END]

@@ -45,3 +45,5 @@ getCoordMatrix <- function(distM, maxDim = NULL) {
 
   return(coordMatrix)
 }
+
+#[END]

@@ -45,7 +45,7 @@
 #' An introduction to cluster analysis. Wiley.
 #'
 #' @export
-#' @import cluster
+#' @importFrom cluster pam
 #' @import ape
 clustPAM <- function(k, file = "", text = NULL){
 
@@ -67,7 +67,7 @@ clustPAM <- function(k, file = "", text = NULL){
   distMatrix <- ape::cophenetic.phylo(phyloTree)
 
   # Use PAM to cluster the tree leaves
-  clusterResult <- cluster::pam(x = distMatrix, k = k, diss = TRUE)
+  clusterResult <- pam(x = distMatrix, k = k, diss = TRUE)
 
   # Create result S3 object of class PAMclusts
   PAMresults <- list(distM = distMatrix,
@@ -126,13 +126,22 @@ clustPAM <- function(k, file = "", text = NULL){
 #' # Make 6 clusters from a newick tree using EM
 #' em <- clustEM(6, text = NwkTree2)
 #'
+#' @author {Yuzi Li, \email{rainal.li@mail.utoronto.ca}}
+#'
 #' @references
 #' Kaufman, L., &amp; Rousseeuw, P. J. (2005). Finding groups in data:
 #' An introduction to cluster analysis. Wiley.
 #'
+#' Paradis E, Schliep K (2019). “ape 5.0: an environment for modern phylogenetics
+#' and evolutionary analyses in R.” Bioinformatics, 35, 526-528.
+#'
+#' Scrucca L, Fop M, Murphy TB, Raftery AE (2016). “mclust 5: clustering,
+#' classification and density estimation using Gaussian finite mixture models.”
+#' The R Journal, 8(1), 289–317. https://doi.org/10.32614/RJ-2016-021.
+#'
 #' @export
 #' @import ape
-#' @import mclust
+#' @importFrom mclust Mclust
 clustEM <- function(k, file = "", text = NULL, maxDim = NULL, maxPC = 5) {
 
   # Check user input
@@ -184,7 +193,7 @@ clustEM <- function(k, file = "", text = NULL, maxDim = NULL, maxPC = 5) {
   }
 
   # Use expectation maximization to cluster the coordinates\
-  em.mod <- mclust::Mclust(reducedMatrix, G = k, verbose = FALSE)
+  em.mod <- Mclust(reducedMatrix, G = k, verbose = FALSE)
 
   # Interpretation of model names
   modNames <- list(E =  "equal variance (univariate)",
@@ -246,3 +255,5 @@ getPhyloTree <- function(file = "", text = NULL) {
 
   return(phyloTree)
 }
+
+#[END]
