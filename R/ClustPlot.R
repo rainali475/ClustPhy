@@ -26,6 +26,10 @@
 #'     each symbol. If the vector is shorter than the number of cluster centers,
 #'     the numbers will be recycled. This argument is ignored if show.centers is
 #'     NULL.
+#' @param node.cex A numeric indicating factor scaling of node circles. Default
+#'     value is 1. This can be a numeric vector indicating scaling of each
+#'     node (that is not a cluster center). If the vector is shorter than the
+#'     number of nodes, the numbers will be recycled.
 #'
 #' @return Returns a phylogram with different colors indicating different
 #'     clusters.
@@ -53,7 +57,8 @@ plotClustersTree <- function(tree,
                          col.palette = NULL,
                          show.centers = NULL,
                          center.symbol = " * ",
-                         symbol.cex = 1) {
+                         symbol.cex = 1,
+                         node.cex = 1) {
 
   # Check user inputs
   col.palette <- getColPalette(tree,
@@ -106,7 +111,8 @@ plotClustersTree <- function(tree,
   ape::tiplabels(text = character(length(leaf.clustering)),
                  tip = clusterMembers,
                  frame = "circle",
-                 bg = leaf.colors)
+                 bg = leaf.colors,
+                 cex = node.cex)
 
   # Add colored tip labels for centers
   if (! is.null(show.centers)) {
@@ -175,6 +181,10 @@ plotClustersTree <- function(tree,
 #'     each symbol. If the vector is shorter than the number of cluster centers,
 #'     the numbers will be recycled. This argument is ignored if show.centers is
 #'     NULL.
+#' @param node.cex A numeric indicating factor scaling of node circles. Default
+#'     value is 1. This can be a numeric vector indicating scaling of each
+#'     node (that is not a cluster center). If the vector is shorter than the
+#'     number of nodes, the numbers will be recycled.
 #' @param maxDim A positive integer that is at least 2, indicating the max
 #'     dimension of the coordinates that represent tree leaves. The dimensions
 #'     will be less than or equal to the number of leaves. The default value of
@@ -208,6 +218,7 @@ plotClusters2D <- function(tree,
                            show.centers = NULL,
                            center.symbol = " * ",
                            symbol.cex = 1,
+                           node.cex = 1,
                            maxDim = NULL) {
   # Check user inputs
   col.palette <- getColPalette(tree,
@@ -215,7 +226,8 @@ plotClusters2D <- function(tree,
                                col.palette,
                                show.centers,
                                center.symbol,
-                               symbol.cex)
+                               symbol.cex,
+                               node.cex)
 
   if (! is.null(maxDim)) {
     if (! is.numeric(maxDim)) {
@@ -250,62 +262,14 @@ plotClusters2D <- function(tree,
   # Get distance matrix from distances between tree leaves
   distMatrix <- ape::cophenetic.phylo(tree)
 
-  # Get euclidean coordinates from distance matrix
-  # Using algorithms outlined in
-  # https://math.stackexchange.com/questions/156161/finding-the-coordinates-of-points-from-distance-matrix
-  # by Legendre17.
-  sq.distM <- distMatrix ^ 2
-  # Generate positive semi-finite matrix M
-  M <- matrix(data = NA, nrow = nrow(distMatrix), ncol = ncol(distMatrix))
-  for (i in 1:nrow(M)) {
-    for (j in 1:ncol(M)) {
-      M[i, j] <- sq.distM[i, 1] + sq.distM[1, j] - sq.distM[i, j]
-    }
-  }
-  M <- M / 2
-  # Use eigendecomposition of M to find coordinates
-  eigen.M <- eigen(M, symmetric = TRUE)
-  sqrt.eigenvals <- eigen.M$values ^ 0.5
-  # Ignore the non-significant dimensions and only keep the valid ones
-  valid.dims <- which(! is.na(sqrt.eigenvals))
-  coordMatrix <- matrix(data = NA, nrow = nrow(distMatrix), ncol = 0)
-  for (i in valid.dims) {
-    coordMatrix <- cbind(coordMatrix, eigen.M$vectors[, i] * sqrt.eigenvals[i])
-  }
-  # Remove the columns that contain only 0s. But make sure the matrix has at
-  # least 2 columns
-  keep.cols <- ! logical(ncol(coordMatrix))
-  for (i in 1:ncol(coordMatrix)) {
-    if (all(coordMatrix[, i] == 0)) {
-      keep.cols[i] <- FALSE
-    }
-  }
-  if (length(which(keep.cols)) < 2) {
-    # keep some columns that contain only 0s so that there is at least 2 columns
-    for (i in 1:(2 - length(which(keep.cols)))) {
-      keep.cols[which(! keep.cols)[i]] <- TRUE
-    }
-  }
-  coordMatrix <- coordMatrix[, keep.cols]
-  # Remove least significant dimensions if there's more dimensions than maxDim
-  if (! is.null(maxDim)) {
-    if (maxDim < ncol(coordMatrix)) {
-      coordMatrix <- coordMatrix[, 1:maxDim]
-    }
-  }
+  coordMatrix <- getCoordMatrix(distMatrix, maxDim)
 
   # Perform PCA on the coordinates matrix
-  tree.pca <- prcomp(coordMatrix)
+  tree.pca <- prcomp(coordMatrix, retx = TRUE)
 
   # Get values for the first 2 dimensions
-  dim1 <- numeric(nrow(coordMatrix))
-  dim2 <- numeric(nrow(coordMatrix))
-  for (i in seq(1:nrow(coordMatrix))) {
-    val1 <- coordMatrix[i, ] %*% tree.pca$rotation[, 1]
-    val2 <- coordMatrix[i, ] %*% tree.pca$rotation[, 2]
-    dim1[i] <- val1[1, 1]
-    dim2[i] <- val2[1, 1]
-  }
+  dim1 <- tree.pca$x[, 1]
+  dim2 <- tree.pca$x[, 2]
 
   # Generate an empty plot
   dim1.pvar <- summary(tree.pca)$importance["Proportion of Variance", 1]
@@ -324,11 +288,24 @@ plotClusters2D <- function(tree,
                      "% explained var.)"))
 
   # Add points from each cluster to the plot
+  numNodes <- length(which(clustering != 0))
+  if (! is.null(show.centers)) {
+    numNodes <- numNodes - length(show.centers)
+  }
+  node.cex <- rep(node.cex,length.out = numNodes)
   clusters <- as.integer(names(table(clustering)))
   clusters <- clusters[clusters != 0]
+  start.node <- 1
+  end.node <- 0
   for (i in clusters) {
     in.clust <- clustering == i
-    points(dim1[in.clust], dim2[in.clust], pch = 21, bg = col.palette[i])
+    end.node <- end.node + length(which(in.clust))
+    points(dim1[in.clust],
+           dim2[in.clust],
+           pch = 21,
+           bg = col.palette[i],
+           cex = node.cex[start.node:end.node])
+    start.node <- start.node + length(which(in.clust))
   }
 
   # Add center symbols
@@ -374,7 +351,8 @@ getColPalette <- function(tree,
                           col.palette = NULL,
                           show.centers = NULL,
                           center.symbol = " * ",
-                          symbol.cex = 1) {
+                          symbol.cex = 1,
+                          node.cex = 1) {
   # Perform checks for user input
   if (class(tree) != "phylo") {
     stop("tree should be an object of class phylo, as outputed by
@@ -427,6 +405,15 @@ getColPalette <- function(tree,
 
   if (any(symbol.cex <= 0)) {
     stop("symbol.cex contains invalid values.")
+  }
+
+  if (! is.numeric(node.cex)) {
+    stop("node.cex must be a numeric indicating factor scaling of center
+         symbols.")
+  }
+
+  if (any(node.cex <= 0)) {
+    stop("node.cex contains invalid values.")
   }
 
   return(col.palette)
