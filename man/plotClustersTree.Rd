@@ -10,7 +10,9 @@ plotClustersTree(
   col.palette = NULL,
   show.centers = NULL,
   center.symbol = " * ",
-  symbol.cex = 1
+  symbol.cex = 1,
+  node.cex = 1,
+  title = "Tree Clusters"
 )
 }
 \arguments{
@@ -42,6 +44,14 @@ Default value is 1. This can be a numeric vector indicating scaling of
 each symbol. If the vector is shorter than the number of cluster centers,
 the numbers will be recycled. This argument is ignored if show.centers is
 NULL.}
+
+\item{node.cex}{A numeric indicating factor scaling of node circles. Default
+value is 1. This can be a numeric vector indicating scaling of each
+node (that is not a cluster center). If the vector is shorter than the
+number of nodes, the numbers will be recycled.}
+
+\item{title}{A character string indicating the title of the plot. Default
+value is "Tree Clusters".}
 }
 \value{
 Returns a phylogram with different colors indicating different
@@ -67,4 +77,11 @@ em <- clustEM(6, text = NwkTree2)
 # Plot the em clusters
 plotClustersTree(em$phyloTree, em$clustering)
 
+}
+\references{
+Paradis E, Schliep K (2019). “ape 5.0: an environment for modern phylogenetics
+and evolutionary analyses in R.” Bioinformatics, 35, 526-528.
+}
+\author{
+{Yuzi Li, \email{rainal.li@mail.utoronto.ca}}
 }

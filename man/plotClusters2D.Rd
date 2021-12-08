@@ -11,7 +11,9 @@ plotClusters2D(
   show.centers = NULL,
   center.symbol = " * ",
   symbol.cex = 1,
-  maxDim = NULL
+  node.cex = 1,
+  maxDim = NULL,
+  title = "Tree Clusters Biplot"
 )
 }
 \arguments{
@@ -44,12 +46,20 @@ each symbol. If the vector is shorter than the number of cluster centers,
 the numbers will be recycled. This argument is ignored if show.centers is
 NULL.}
 
+\item{node.cex}{A numeric indicating factor scaling of node circles. Default
+value is 1. This can be a numeric vector indicating scaling of each
+node (that is not a cluster center). If the vector is shorter than the
+number of nodes, the numbers will be recycled.}
+
 \item{maxDim}{A positive integer that is at least 2, indicating the max
 dimension of the coordinates that represent tree leaves. The dimensions
 will be less than or equal to the number of leaves. The default value of
 maxDim is NULL, for which the full dimension will be used. maxDim can be
 set smaller to decrease runtime of PCA at the cost of discarding the
 least significant dimensions beyond maxDim.}
+
+\item{title}{A character string indicating the title of the plot. Default
+value is "Tree Clusters Biplot".}
 }
 \value{
 Returns a biplot of different clusters with different colors and
@@ -73,4 +83,11 @@ dimRedInfoPAM <- plotClusters2D(pam$phyloTree,
                                 show.centers = pam$medoids,
                                 center.symbol = pam$medoids)
 
+}
+\references{
+Paradis E, Schliep K (2019). “ape 5.0: an environment for modern phylogenetics
+and evolutionary analyses in R.” Bioinformatics, 35, 526-528.
+}
+\author{
+{Yuzi Li, \email{rainal.li@mail.utoronto.ca}}
 }

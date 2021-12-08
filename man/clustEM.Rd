@@ -4,7 +4,7 @@
 \alias{clustEM}
 \title{Cluster phylogenetic tree using EM}
 \usage{
-clustEM(k, file = "", text = NULL)
+clustEM(k, file = "", text = NULL, maxDim = NULL, maxPC = 5)
 }
 \arguments{
 \item{k}{A positive integer greater than 1 indicating the number of clusters.}
@@ -15,6 +15,22 @@ Default value is "".}
 \item{text}{A character string of the tree in newick format. Default value
 is NULL. By default, this is ignored. When this argument is assigned a
 value, the argument file is ignored.}
+
+\item{maxDim}{A positive integer that is at least 2, indicating the max
+dimension of the coordinates that represent tree leaves. The dimensions
+will be less than or equal to the number of leaves. The default value of
+maxDim is NULL, for which the full dimension will be used. maxDim can be
+set smaller to decrease runtime of PCA at the cost of discarding the
+least significant dimensions beyond maxDim.}
+
+\item{maxPC}{A positive integer that is at least 2 indicating the maximum
+number of dimensions of the reduced coordinates of the tree leaves after
+PCA used towards EM clustering. The dimensions of the reduced coordinates
+will never exceedthe number of leaves in the tree when maxDim is NULL and
+will be at most maxDim if maxDim is given. Default value of maxPC is 5,
+as usually most of the variance in the data can be explained by the top
+5 principle components. Including too many dimensions can lead to sparse
+datapoints and prevent efficient clustering.}
 }
 \value{
 Returns an S3 object of class EMclusts with results.
@@ -28,6 +44,8 @@ assigned to each leaf.
 coordinates of cluster centers.
 \item bic - A numeric indicating BIC value of the optimal model.
 \item model - A character string describing the optimal model used.
+\item dimredResult - An S3 object of class treeDimred with the coordinate
+matrix and PCA results.
 }
 }
 \description{
@@ -44,4 +62,14 @@ em <- clustEM(6, text = NwkTree2)
 \references{
 Kaufman, L., & Rousseeuw, P. J. (2005). Finding groups in data:
 An introduction to cluster analysis. Wiley.
+
+Paradis E, Schliep K (2019). “ape 5.0: an environment for modern phylogenetics
+and evolutionary analyses in R.” Bioinformatics, 35, 526-528.
+
+Scrucca L, Fop M, Murphy TB, Raftery AE (2016). “mclust 5: clustering,
+classification and density estimation using Gaussian finite mixture models.”
+The R Journal, 8(1), 289–317. https://doi.org/10.32614/RJ-2016-021.
+}
+\author{
+{Yuzi Li, \email{rainal.li@mail.utoronto.ca}}
 }

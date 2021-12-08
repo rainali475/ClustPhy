@@ -46,3 +46,10 @@ gapStat$Tab
 set.seed(NULL)
 
 }
+\references{
+Maechler M, Rousseeuw P, Struyf A, Hubert M, Hornik K (2021). cluster: Cluster
+Analysis Basics and Extensions. R package version 2.1.2
+}
+\author{
+{Yuzi Li, \email{rainal.li@mail.utoronto.ca}}
+}

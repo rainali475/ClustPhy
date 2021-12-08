@@ -11,7 +11,10 @@
 `ClustPhy` is an R package for clustering phylogenetic trees (using PAM
 or EM clustering), comparing different clusterings (using gap
 statistics), and visualizing the clusters (in a phylogenetic tree or in
-a 2D biplot).
+a 2D biplot). This package wsas developed using
+`R version 4.1.1 (2021-08-10)`, platform:
+`x86_64-w64-mingw32/x64 (64-bit)`, Running under:
+`Windows 10 x64 (build 19042)`.
 
 ## Installation
 
@@ -20,7 +23,7 @@ To install the latest version of the package:
 ``` r
 require("devtools")
 devtools::install_github("rainali475/ClustPhy", build_vignettes = TRUE)
-library("TestingPackage")
+library("ClustPhy")
 ```
 
 To run the Shiny app:
@@ -94,6 +97,22 @@ Legendre17. (1960, August 1). Finding the coordinates of points from
 distance matrix. Mathematics Stack Exchange. Retrieved November 17,
 2021, from
 <https://math.stackexchange.com/questions/156161/finding-the-coordinates-of-points-from-distance-matrix>.
+
+Paradis E, Schliep K (2019). “ape 5.0: an environment for modern
+phylogenetics and evolutionary analyses in R.” Bioinformatics, 35,
+526-528.
+
+Maechler M, Rousseeuw P, Struyf A, Hubert M, Hornik K (2021). cluster:
+Cluster Analysis Basics and Extensions. R package version 2.1.2
+
+Alboukadel Kassambara and Fabian Mundt (2020). factoextra: Extract and
+Visualize the Results of Multivariate Data Analyses. R package version
+1.0.7. <https://CRAN.R-project.org/package=factoextra>
+
+Scrucca L, Fop M, Murphy TB, Raftery AE (2016). “mclust 5: clustering,
+classification and density estimation using Gaussian finite mixture
+models.” The R Journal, 8(1), 289–317.
+<https://doi.org/10.32614/RJ-2016-021>.
 
 ## Acknowledgement
 

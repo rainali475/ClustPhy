@@ -37,3 +37,11 @@ set.seed(NULL)
 plotGapStat(gapStat)
 
 }
+\references{
+Alboukadel Kassambara and Fabian Mundt (2020). factoextra: Extract and
+Visualize the Results of Multivariate Data Analyses. R package version 1.0.7.
+https://CRAN.R-project.org/package=factoextra
+}
+\author{
+{Yuzi Li, \email{rainal.li@mail.utoronto.ca}}
+}
