@@ -141,7 +141,7 @@ clustPAM <- function(k, file = "", text = NULL){
 #'
 #' @export
 #' @import ape
-#' @importFrom mclust Mclust
+#' @import mclust
 clustEM <- function(k, file = "", text = NULL, maxDim = NULL, maxPC = 5) {
 
   # Check user input
@@ -193,7 +193,7 @@ clustEM <- function(k, file = "", text = NULL, maxDim = NULL, maxPC = 5) {
   }
 
   # Use expectation maximization to cluster the coordinates\
-  em.mod <- Mclust(reducedMatrix, G = k, verbose = FALSE)
+  em.mod <- mclust::Mclust(reducedMatrix, G = k, verbose = FALSE)
 
   # Interpretation of model names
   modNames <- list(E =  "equal variance (univariate)",
