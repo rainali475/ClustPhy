@@ -92,6 +92,20 @@ clustPAM <- function(k, file = "", text = NULL){
 #' @param text A character string of the tree in newick format. Default value
 #'     is NULL. By default, this is ignored. When this argument is assigned a
 #'     value, the argument file is ignored.
+#' @param maxDim A positive integer that is at least 2, indicating the max
+#'     dimension of the coordinates that represent tree leaves. The dimensions
+#'     will be less than or equal to the number of leaves. The default value of
+#'     maxDim is NULL, for which the full dimension will be used. maxDim can be
+#'     set smaller to decrease runtime of PCA at the cost of discarding the
+#'     least significant dimensions beyond maxDim.
+#' @param maxPC A positive integer that is at least 2 indicating the maximum
+#'     number of dimensions of the reduced coordinates of the tree leaves after
+#'     PCA used towards EM clustering. The dimensions of the reduced coordinates
+#'     will never exceedthe number of leaves in the tree when maxDim is NULL and
+#'     will be at most maxDim if maxDim is given. Default value of maxPC is 5,
+#'     as usually most of the variance in the data can be explained by the top
+#'     5 principle components. Including too many dimensions can lead to sparse
+#'     datapoints and prevent efficient clustering.
 #'
 #' @return Returns an S3 object of class EMclusts with results.
 #' \itemize{
@@ -104,6 +118,8 @@ clustPAM <- function(k, file = "", text = NULL){
 #'     coordinates of cluster centers.
 #'     \item bic - A numeric indicating BIC value of the optimal model.
 #'     \item model - A character string describing the optimal model used.
+#'     \item dimredResult - An S3 object of class treeDimred with the coordinate
+#'     matrix and PCA results.
 #' }
 #'
 #' @examples
@@ -117,7 +133,7 @@ clustPAM <- function(k, file = "", text = NULL){
 #' @export
 #' @import ape
 #' @import mclust
-clustEM <- function(k, file = "", text = NULL) {
+clustEM <- function(k, file = "", text = NULL, maxDim = NULL, maxPC = 5) {
 
   # Check user input
   if (is.numeric(k) == FALSE | k <= 1 | k != as.integer(k)) {
@@ -133,11 +149,42 @@ clustEM <- function(k, file = "", text = NULL) {
          Please decrease k.")
   }
 
+  # Check maxDim and maxPC
+  if (! is.null(maxDim)) {
+    if (! is.numeric(maxDim)) {
+      stop("maxDim must be a positive integer indicating the maximum
+         dimension of the coordinates representation of tree leaves.")
+    } else if (maxDim < 2 | as.integer(maxDim) != maxDim) {
+      stop("maxDim must be a positive integer indicating the maximum
+         dimension of the coordinates representation of tree leaves.")
+    }
+  }
+
+  if (! is.numeric(maxPC)) {
+    stop("maxPC must be a positive integer indicating the maximum
+         dimension of the coordinates representation of tree leaves.")
+  } else if (maxPC < 2 | as.integer(maxPC) != maxPC) {
+    stop("maxPC must be a positive integer indicating the maximum
+         dimension of the coordinates representation of tree leaves.")
+  }
+
   # Get distance matrix from distances between tree leaves
   distMatrix <- ape::cophenetic.phylo(phyloTree)
 
+  # Get coordinate matrix from distance matrix
+  coordMatrix <- getCoordMatrix(distMatrix, maxDim)
+
+  # Do PCA on coordinate matrix to reduce dimensions
+  pca <- prcomp(coordMatrix, retx = TRUE)
+
+  # Use the desired number of dimensions for EM cluster input
+  reducedMatrix <- pca$x
+  if (ncol(reducedMatrix) > maxPC) {
+    reducedMatrix <- reducedMatrix[, 1:maxPC]
+  }
+
   # Use expectation maximization to cluster the coordinates\
-  em.mod <- mclust::Mclust(distMatrix, G = k, verbose = FALSE)
+  em.mod <- mclust::Mclust(reducedMatrix, G = k, verbose = FALSE)
 
   # Interpretation of model names
   modNames <- list(E =  "equal variance (univariate)",
@@ -154,12 +201,16 @@ clustEM <- function(k, file = "", text = NULL) {
                    VVV = "ellipsoidal, varying volume, shape, and orientation")
 
   # Create an object of class EMclusts with results
+  dimredResult <- list(coordM = coordMatrix,
+                       PCA = pca)
+  class(dimredResult) <- "treeDimRed"
   EMresults <- list(distM = distMatrix,
                     phyloTree = phyloTree,
                     clustering = em.mod$classification,
                     mean = unname(em.mod$parameters$mean),
                     bic = em.mod$bic,
-                    model = modNames[[em.mod$modelName]])
+                    model = modNames[[em.mod$modelName]],
+                    dimredResult = dimredResult)
   class(EMresults) <- "EMclusts"
   return(EMresults)
 }
