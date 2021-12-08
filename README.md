@@ -13,7 +13,7 @@ or EM clustering), comparing different clusterings (using gap
 statistics), and visualizing the clusters (in a phylogenetic tree or in
 a 2D biplot). This package wsas developed using
 `R version 4.1.1 (2021-08-10)`, platform:
-`x86_64-w64-mingw32/x64 (64-bit)`, Running under:
+`x86_64-w64-mingw32/x64 (64-bit)`, running under:
 `Windows 10 x64 (build 19042)`.
 
 ## Installation
