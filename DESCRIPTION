@@ -21,7 +21,8 @@ Imports:
     cluster,
     ape,
     mclust, 
-    factoextra
+    factoextra, 
+    shiny
 Suggests: 
     rmarkdown,
     knitr,
