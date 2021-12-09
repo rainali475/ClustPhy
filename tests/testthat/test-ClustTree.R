@@ -37,23 +37,22 @@ test_that("EM clustering with 3 clusters from a character string of newick tree"
              15, 9, 7, 0, 20,
              17, 21, 19, 20, 0)
   distM <- matrix(distM, nrow = 5, byrow = TRUE)
-  clustering <- c(1, 2, 2, 2, 3)
-  trunc.mean <- c(0, 15, 17,
-                  16, 5, 21,
-                  14, 5, 19,
-                  15, 5, 20,
-                  17, 20, 0)
-  trunc.mean <- matrix(trunc.mean, nrow = 5, byrow = TRUE)
+  clustering <- c(1, 3, 3, 3, 2)
+  trunc.mean <- c(-3, -13, 5,
+                  -9, 4, 1,
+                  0, 0, 0,
+                  0, 0, 0)
+  trunc.mean <- matrix(trunc.mean, nrow = 4, byrow = TRUE)
 
   expect_type(em, "list")
   expect_s3_class(em, "EMclusts")
-  expect_length(em, 6)
+  expect_length(em, 7)
   expect_identical(unname(em$distM), distM)
   expect_s3_class(em$phyloTree, "phylo")
   expect_equal(unname(em$clustering), clustering)
   expect_identical(trunc(em$mean), trunc.mean)
-  expect_identical(trunc(em$bic), -139)
-  expect_identical(em$model, "diagonal, equal volume and shape")
+  expect_identical(trunc(em$bic), -113)
+  expect_identical(em$model, "spherical, equal volume")
 })
 
 test_that("clustPAM error upon invalid user input", {
