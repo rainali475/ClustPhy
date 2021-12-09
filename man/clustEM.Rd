@@ -26,11 +26,11 @@ least significant dimensions beyond maxDim.}
 \item{maxPC}{A positive integer that is at least 2 indicating the maximum
 number of dimensions of the reduced coordinates of the tree leaves after
 PCA used towards EM clustering. The dimensions of the reduced coordinates
-will never exceedthe number of leaves in the tree when maxDim is NULL and
+will never exceed the number of leaves in the tree when maxDim is NULL and
 will be at most maxDim if maxDim is given. Default value of maxPC is 5,
 as usually most of the variance in the data can be explained by the top
 5 principle components. Including too many dimensions can lead to sparse
-datapoints and prevent efficient clustering.}
+datapoints and prevent effective clustering.}
 }
 \value{
 Returns an S3 object of class EMclusts with results.

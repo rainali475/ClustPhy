@@ -29,7 +29,7 @@ library("ClustPhy")
 To run the Shiny app:
 
 ``` r
-Under construction
+runClustPhy()
 ```
 
 ## Overview
