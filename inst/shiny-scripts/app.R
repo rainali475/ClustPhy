@@ -369,17 +369,74 @@ ui <- fluidPage(
             # Show distance matrix if requested
             checkboxInput(inputId = "showDistM",
                           label = "Show distance matrix",
-                          value = TRUE),
+                          value = FALSE),
             conditionalPanel(
 
               condition = "input.showDistM",
 
               tableOutput("distM")
+            ),
+
+            tags$br(),
+            tags$hr(),
+            tags$br(),
+
+            # PAM-specific clustering data
+            conditionalPanel(
+
+              condition = "input.clustMethod == 'PAM'",
+
+              # Show medoids
+              checkboxInput(inputId = "showMedoids",
+                            label = "Show medoids",
+                            value = TRUE),
+              conditionalPanel(
+
+                condition = "input.showMedoids",
+
+                tableOutput("medoidsTable")
+              ),
+
+              tags$br(),
+              tags$hr(),
+              tags$br(),
+
+              # Show stats
+              checkboxInput(inputId = "showPAMstats",
+                            label = "Show other PAM-specific statistics",
+                            value = TRUE),
+              conditionalPanel(
+
+                condition = "input.showPAMstats",
+
+                splitLayout(
+                  tableOutput("PAMstatsTable"),
+
+                  tags$h5(
+                    tags$b("size: "),
+                    "number of leaves in the cluster.",
+                    tags$br(),
+                    tags$b("max_diss: "),
+                    "maximum dissimilarity between leaves in the cluster",
+                    tags$br(),
+                    "and center of the cluster.",
+                    tags$br(),
+                    tags$b("av_diss: "),
+                    "average dissimilarity between leaves in the cluster",
+                    tags$br(),
+                    "and center of the cluster.",
+                    tags$br(),
+                    tags$b("diameter: "),
+                    "maximum dissimilarity between two leaves in the cluster.",
+                    tags$br(),
+                    tags$b("separation: "),
+                    "minimum dissimilarity between one leaf of this cluster",
+                    tags$br(),
+                    "and one leaf of another cluster."
+                  )
+                )
+              )
             )
-
-            # TODO: Show medoids if used PAM and requested
-
-            # TODO: Show additional PAM clustering stats if requested
 
             # TODO: Show mean coordinates of cluster centers if used EM
 
@@ -400,6 +457,9 @@ ui <- fluidPage(
 )
 
 server <- function(input, output) {
+
+  # A helper function that creates cluster names
+  makeClusterName <- function(x) paste("Cluster", x)
 
   # Define clustering based on user selection
   clusts <- reactive({
@@ -514,7 +574,6 @@ server <- function(input, output) {
       col[1:clusterCount[i]] <- names(clusts()$clustering)[sel]
       clustertb <- cbind(clustertb, col)
     }
-    makeClusterName <- function(x) paste("Cluster", x)
     colnames(clustertb) <- lapply(names(clusterCount),
                                   makeClusterName)
     clustertb
@@ -528,6 +587,29 @@ server <- function(input, output) {
     clusts()$distM
   },
   rownames = TRUE,
+  striped = TRUE,
+  hover = TRUE,
+  bordered = TRUE)
+
+  # Generate medoids table
+  output$medoidsTable <- renderTable({
+    if (class(clusts()) == "PAMclusts") {
+      medoids <- clusts()$medoids
+      medoids <- t(matrix(medoids, byrow = TRUE))
+      colnames(medoids) <- lapply(as.character(1:ncol(medoids)), makeClusterName)
+      medoids
+    }
+  },
+  striped = TRUE,
+  hover = TRUE,
+  bordered = TRUE)
+
+  # Generate other PAM-specific stats table
+  output$PAMstatsTable <- renderTable({
+    if (class(clusts()) == "PAMclusts") {
+      clusts()$stats
+    }
+  },
   striped = TRUE,
   hover = TRUE,
   bordered = TRUE)
