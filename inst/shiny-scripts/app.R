@@ -360,9 +360,22 @@ ui <- fluidPage(
               condition = "input.showClusterTable",
 
               tableOutput("clusterTable")
-            )
+            ),
 
-            # TODO: Show distance matrix if requested
+            tags$br(),
+            tags$hr(),
+            tags$br(),
+
+            # Show distance matrix if requested
+            checkboxInput(inputId = "showDistM",
+                          label = "Show distance matrix",
+                          value = TRUE),
+            conditionalPanel(
+
+              condition = "input.showDistM",
+
+              tableOutput("distM")
+            )
 
             # TODO: Show medoids if used PAM and requested
 
@@ -505,12 +518,27 @@ server <- function(input, output) {
     colnames(clustertb) <- lapply(names(clusterCount),
                                   makeClusterName)
     clustertb
-  })
+  },
+  striped = TRUE,
+  hover = TRUE,
+  bordered = TRUE)
+
+  # Output distance matrix
+  output$distM <- renderTable({
+    clusts()$distM
+  },
+  rownames = TRUE,
+  striped = TRUE,
+  hover = TRUE,
+  bordered = TRUE)
 
   # Generate gap statistics table
   output$gapStatTable <- renderTable({
     gapstat()$Tab
-  })
+  },
+  striped = TRUE,
+  hover = TRUE,
+  bordered = TRUE)
 }
 shiny::shinyApp(ui = ui, server = server)
 # [END]
