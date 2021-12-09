@@ -264,7 +264,7 @@ ui <- fluidPage(
 
         # Tab for finding the best k number of clusters via gap statistics
         tabPanel(
-          title = "Gap Statistics",
+          title = "Gap Statistics Plot",
 
           # Wrap splitLayout (float left) inside fluidRow to define a top padding
           fluidRow(
@@ -297,15 +297,89 @@ ui <- fluidPage(
               # Select method for computing optimal k value
               selectInput(inputId = "gapstatMethod",
                           label = "Method for determining optimal k value",
-                          choices = c("Global maximum" = "globalmax",
-                                      "First maximum" = "firstmax",
-                                      "Tibshirani et al (2001) SE maximum" = "Tibs2001SEmax",
-                                      "First SE maximum" = "firstSEmax"),
+                          choices = c("Global max" = "globalmax",
+                                      "First max" = "firstmax",
+                                      "Tibshirani et al (2001) SE max" = "Tibs2001SEmax",
+                                      "First SE max" = "firstSEmax"),
                           selected = "Tibs2001SEmax")
             )
           ),
           # Plot gapstat
-          plotOutput("gapstat", height = "600px")
+          plotOutput("gapstatPlot", height = "600px")
+        )
+      ),
+
+      tags$br(),
+      tags$hr(),
+      tags$br(),
+
+      # Show an additional set of tab panels if user wants more output
+      # statistics
+      checkboxInput(inputId = "showMoreStats",
+                    label = "Show further output statistics (tables, etc.)",
+                    value = TRUE),
+
+      conditionalPanel(
+
+        condition = "input.showMoreStats",
+
+        tabsetPanel(
+
+          # Show clustering information
+          tabPanel(
+
+            title = "Clustering",
+
+            splitLayout(
+
+              style = "padding-top: 50px; padding-bottom: 50px;",
+
+              # Search leaf for its cluster
+              textInput(inputId = "searchLeaf",
+                        label = "Search a leaf name for cluster",
+                        value = NULL),
+
+              verticalLayout(
+                tags$h4("Search result:"),
+
+                # Show search result
+                textOutput("searchLeafResult")
+              )
+            ),
+
+            tags$br(),
+            tags$hr(),
+            tags$br(),
+
+            # Show table of clusters if requested
+            checkboxInput(inputId = "showClusterTable",
+                          label = "Show cluster table",
+                          value = TRUE),
+            conditionalPanel(
+
+              condition = "input.showClusterTable",
+
+              tableOutput("clusterTable")
+            )
+
+            # TODO: Show distance matrix if requested
+
+            # TODO: Show medoids if used PAM and requested
+
+            # TODO: Show additional PAM clustering stats if requested
+
+            # TODO: Show mean coordinates of cluster centers if used EM
+
+            # TODO: Show additional EM clustering stats if requested
+
+            # TODO: Show coordinate matrix
+          ),
+
+          tabPanel(
+            title = "Gap Statistics",
+            style = "padding-top: 50px;",
+            tableOutput("gapStatTable")
+          )
         )
       )
     )
@@ -321,6 +395,13 @@ server <- function(input, output) {
     } else {
       clustEM(k = input$k, text = input$tree, maxPC = input$maxPC)
     }
+  })
+
+  # Calculate gap statistics
+  gapstat <- reactive({
+    compareGap(distM = clusts()$distM,
+               k.max = input$kmax,
+               method = input$clustMethod)
   })
 
   # Add cluster plots to output
@@ -390,15 +471,45 @@ server <- function(input, output) {
   })
 
   # Add gap statistics plot to output
-  output$gapstat <- renderPlot({
-    # Calculate gap statistics
-    gapstat <- compareGap(distM = clusts()$distM,
-                          k.max = input$kmax,
-                          method = input$clustMethod)
+  output$gapstatPlot <- renderPlot({
     # Plot gap statistics and optimal k
-    plotGapStat(gapStat = gapstat,
+    plotGapStat(gapStat = gapstat(),
                 method = input$gapstatMethod,
                 color = input$gapstatCol)
+  })
+
+  # Search leaf for cluster
+  output$searchLeafResult <- renderText({
+    clustering <- clusts()$clustering
+    # Get leaf index
+    leafIdx <- which(clusts()$phyloTree$tip.label == input$searchLeaf)
+    if (length(leafIdx) == 0) {
+      "Leaf name not found"
+    } else {
+      paste("Cluster", as.character(clustering[leafIdx]))
+    }
+  })
+
+  # Generate cluster table from clustering result
+  output$clusterTable <- renderTable({
+    clusterCount <- table(clusts()$clustering)
+    nRows <- max(clusterCount)
+    clustertb <- c()
+    for (i in seq_along(names(clusterCount))) {
+      col <- character(nRows)
+      sel <- which(clusts()$clustering == as.integer(i))
+      col[1:clusterCount[i]] <- names(clusts()$clustering)[sel]
+      clustertb <- cbind(clustertb, col)
+    }
+    makeClusterName <- function(x) paste("Cluster", x)
+    colnames(clustertb) <- lapply(names(clusterCount),
+                                  makeClusterName)
+    clustertb
+  })
+
+  # Generate gap statistics table
+  output$gapStatTable <- renderTable({
+    gapstat()$Tab
   })
 }
 shiny::shinyApp(ui = ui, server = server)
