@@ -75,12 +75,9 @@ plotClustersTree <- function(tree,
                                col.palette,
                                show.centers,
                                center.symbol,
-                               symbol.cex)
-
-  # Check title
-  if (! is.character(title)) {
-    stop("title must be a character string indicating the plot title.")
-  }
+                               symbol.cex,
+                               node.cex,
+                               title)
 
   # Check if the tree contains branch lengths
   if (! "edge.length" %in% names(tree)) {
@@ -250,12 +247,9 @@ plotClusters2D <- function(tree,
                                show.centers,
                                center.symbol,
                                symbol.cex,
-                               node.cex)
+                               node.cex,
+                               title)
 
-  # Check title
-  if (! is.character(title)) {
-    stop("title must be a character string indicating the plot title.")
-  }
 
   if (! is.null(maxDim)) {
     if (! is.numeric(maxDim)) {
@@ -381,7 +375,8 @@ getColPalette <- function(tree,
                           show.centers = NULL,
                           center.symbol = " * ",
                           symbol.cex = 1,
-                          node.cex = 1) {
+                          node.cex = 1,
+                          title) {
   # Perform checks for user input
   if (class(tree) != "phylo") {
     stop("tree should be an object of class phylo, as outputed by
@@ -443,6 +438,11 @@ getColPalette <- function(tree,
 
   if (any(node.cex <= 0)) {
     stop("node.cex contains invalid values.")
+  }
+
+  # Check title
+  if (! is.character(title)) {
+    stop("title must be a character string indicating the plot title.")
   }
 
   return(col.palette)
