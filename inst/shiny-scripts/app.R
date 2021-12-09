@@ -328,6 +328,8 @@ ui <- fluidPage(
           # Show clustering information
           tabPanel(
 
+            style = "padding-bottom: 200px;",
+
             title = "Clustering",
 
             splitLayout(
@@ -445,7 +447,9 @@ ui <- fluidPage(
             # TODO: Show coordinate matrix
           ),
 
+          # Tab for gap stats table
           tabPanel(
+            style = "padding-bottom: 200px;",
             title = "Gap Statistics",
             style = "padding-top: 50px;",
             tableOutput("gapStatTable")
@@ -571,7 +575,7 @@ server <- function(input, output) {
     for (i in seq_along(names(clusterCount))) {
       col <- character(nRows)
       sel <- which(clusts()$clustering == as.integer(i))
-      col[1:clusterCount[i]] <- names(clusts()$clustering)[sel]
+      col[1:clusterCount[i]] <- clusts()$phyloTree$tip.label[sel]
       clustertb <- cbind(clustertb, col)
     }
     colnames(clustertb) <- lapply(names(clusterCount),
